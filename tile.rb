@@ -13,7 +13,10 @@ class MinesweeperTile
   end
 
   def reveal(board, last_pos = nil)
-    return if flagged || revealed
+    if flagged || revealed
+      puts "you can't reveal that tile"
+      return
+    end
     #set reveal to true, return neighbor_bomb count, or blow you up if bomb
     @revealed = true
     return :boom if @bombed

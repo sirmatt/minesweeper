@@ -1,15 +1,18 @@
+require "byebug"
 require_relative "tile.rb"
 
 class Board
-  attr_reader :size, :grid
+  attr_reader :size, :grid, :bombs
 
   def initialize(size = 9, bombs = 10)
+    @bombs = bombs
     @size = size
     @grid = Array.new(size) {Array.new(size)}
     populate(bombs)
   end
 
   def populate(bombs)
+    #debugger
     #generate tiles for each square on grid and assign to grid.
     #call neighbors on each tile.
     bomb_count = bombs
@@ -17,8 +20,8 @@ class Board
     size.times do |row|
       size.times do |col|
         bombed = random
-        bomb_count -= 1 if bombed
         bombed = false if bomb_count <= 0
+        bomb_count -= 1 if bombed
         @grid[row][col] = MinesweeperTile.new([row,col],bombed)
       end
     end
@@ -38,9 +41,8 @@ class Board
   end
 
   def random
-    # chance = rand(2)
-    # chance.zero? ? true : false
-    true
+    chance = rand(size**2 / bombs)
+    chance.zero? ? true : false
   end
 
   def game_over?
