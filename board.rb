@@ -5,8 +5,7 @@ class Board
   attr_reader :size, :grid, :bombs
 
   def initialize(size = 9, bombs = 10)
-    @bombs = bombs
-    @size = size
+    @bombs, @size = bombs, size
     @grid = Array.new(size) {Array.new(size)}
     populate(bombs)
   end
@@ -15,34 +14,38 @@ class Board
     #debugger
     #generate tiles for each square on grid and assign to grid.
     #call neighbors on each tile.
-    bomb_count = bombs
 
     size.times do |row|
       size.times do |col|
-        bombed = random
-        bombed = false if bomb_count <= 0
-        bomb_count -= 1 if bombed
-        @grid[row][col] = MinesweeperTile.new([row,col],bombed)
+        @grid[row][col] = MinesweeperTile.new([row, col], false)
       end
     end
+
+    random
   end
 
   def render
     print " "
-    (0...@grid.length).each {|el| print el.to_s}
+    (0...@grid.length).each { |el| print el.to_s + " " }
     print "\n"
     @grid.each_with_index do |row, row_idx|
       print row_idx.to_s
       row.each_with_index do |col, col_idx|
-        print col.value
+        print col.value + " "
       end
       print "\n"
     end
   end
 
   def random
-    chance = rand(size**2 / bombs)
-    chance.zero? ? true : false
+    #assign bombs to random tiles
+    bombs_assigned = 0
+    until bombs_assigned == bombs
+      pos = [rand(size),rand(size)]
+      next if self[pos].bombed
+      self[pos].bombed = true
+      bombs_assigned += 1
+    end
   end
 
   def game_over?

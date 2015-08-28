@@ -1,20 +1,26 @@
 require_relative 'board.rb'
 
 class MinesweeperTile
-  attr_reader :flagged, :revealed, :bombed
+  attr_accessor :bombed
+  attr_reader :flagged, :revealed
+
+  DELTA_POS = [[-1, -1],
+  [-1, 0],
+  [-1, 1],
+  [0, -1],
+  [0, 1],
+  [1, -1],
+  [1, 0],
+  [1, 1]]
 
   def initialize(pos, bombed)
-    @bombed = bombed
-    @pos = pos
-    @flagged = false
-    @revealed = false
-    @neighbors = []
-    @neighbor_bomb_count = 0
+    @bombed, @pos, @flagged, @revealed,
+    @neighbors_bomb_count, @neighbors = bombed, pos, false, false, 0, []
   end
 
   def reveal(board, last_pos = nil)
     if flagged || revealed
-      puts "you can't reveal that tile"
+      puts "you can't reveal that tile" unless last_pos
       return
     end
     #set reveal to true, return neighbor_bomb count, or blow you up if bomb
@@ -32,25 +38,22 @@ class MinesweeperTile
   end
 
   def flag
-    @flagged = true
-  end
-
-  def unflag
-    puts "I already had it that way" if !@flagged
-    @flagged = false
+    return if revealed
+    @flagged ? @flagged = false : @flagged = true
   end
 
   def neighbors(board)
 
     adjacent_positions = []
-    adjacent_positions << [@pos[0] - 1, @pos[1] - 1]
-    adjacent_positions << [@pos[0] - 1, @pos[1]]
-    adjacent_positions << [@pos[0] - 1, @pos[1] + 1]
-    adjacent_positions << [@pos[0], @pos[1] - 1]
-    adjacent_positions << [@pos[0], @pos[1] + 1]
-    adjacent_positions << [@pos[0] + 1, @pos[1] - 1]
-    adjacent_positions << [@pos[0] + 1, @pos[1]]
-    adjacent_positions << [@pos[0] + 1, @pos[1] + 1]
+    DELTA_POS.each { |delta| adjacent_positions << [delta[0] + @pos[0], delta[1] + @pos[1]] }
+    # adjacent_positions << [@pos[0] - 1, @pos[1] - 1]
+    # adjacent_positions << [@pos[0] - 1, @pos[1]]
+    # adjacent_positions << [@pos[0] - 1, @pos[1] + 1]
+    # adjacent_positions << [@pos[0], @pos[1] - 1]
+    # adjacent_positions << [@pos[0], @pos[1] + 1]
+    # adjacent_positions << [@pos[0] + 1, @pos[1] - 1]
+    # adjacent_positions << [@pos[0] + 1, @pos[1]]
+    # adjacent_positions << [@pos[0] + 1, @pos[1] + 1]
 
     adjacent_positions.select! do |pos|
       pos[0].between?(0,board.grid.length - 1) && pos[1].between?(0,board.grid.length - 1)
@@ -65,6 +68,7 @@ class MinesweeperTile
 
   def neighbor_bomb_count
     #reveals adjacent tiles, counts bombs
+    @neighbor_bomb_count = 0
     @neighbors.each do |tile|
       @neighbor_bomb_count += 1 if tile.bombed
     end
