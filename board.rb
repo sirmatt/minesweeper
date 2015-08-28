@@ -1,3 +1,5 @@
+require_relative "tile.rb"
+
 class Board
   def initialize
     @grid = Array.new(9) {Array.new(9)}
@@ -19,7 +21,8 @@ class Board
   end
 
   def render
-    print (0..8).to_s
+    print " "
+    (0..8).each {|el| print el.to_s}
     print "\n"
     @grid.each_with_index do |row, row_idx|
       print row_idx.to_s
