@@ -20,4 +20,14 @@ class MinesweeperTile
   def neighbor_bomb_count
     #reveals adjacent tiles, counts bombs
   end
+
+  def value
+    return "F" if flagged
+    if revealed
+      return "*" if @bombed
+      return @neighbor_bomb_count.to_s
+    else
+      return "-"
+    end
+  end
 end
