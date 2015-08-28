@@ -1,28 +1,32 @@
 require_relative "tile.rb"
 
 class Board
-  def initialize
-    @grid = Array.new(9) {Array.new(9)}
-    populate
+  attr_reader :size, :grid
+
+  def initialize(size = 9, bombs = 10)
+    @size = size
+    @grid = Array.new(size) {Array.new(size)}
+    populate(bombs)
   end
 
-  def populate
+  def populate(bombs)
     #generate tiles for each square on grid and assign to grid.
     #call neighbors on each tile.
-    bomb_count = 10
+    bomb_count = bombs
 
-    9.times do |row|
-      9.times do |col|
+    size.times do |row|
+      size.times do |col|
         bombed = random
         bomb_count -= 1 if bombed
-        @grid[row][col] = MinesweeperTile.new(bombed)
+        bombed = false if bomb_count <= 0
+        @grid[row][col] = MinesweeperTile.new([row,col],bombed)
       end
     end
   end
 
   def render
     print " "
-    (0..8).each {|el| print el.to_s}
+    (0...@grid.length).each {|el| print el.to_s}
     print "\n"
     @grid.each_with_index do |row, row_idx|
       print row_idx.to_s
@@ -34,16 +38,37 @@ class Board
   end
 
   def random
-    chance = rand(7)
-    chance.zero? ? true : false
+    # chance = rand(2)
+    # chance.zero? ? true : false
+    true
   end
 
   def game_over?
     #return true if a bomb tile is revealed, or board_won?
+    @grid.each do |row|
+      row.each do |tile|
+        return true if tile.revealed && tile.bombed?
+      end
+    end
+
+    return true if board_won?
+    false
   end
 
   def board_won?
     #return true if all tiles revealed or flagged, and no false_flags
+    @grid.all? do |row_of_tiles|
+      row_of_tiles.all? do |tile|
+
+        if tile.revealed
+          true
+        elsif tile.flagged && tile.bombed
+          true
+        else
+          false
+        end
+      end
+    end
   end
 
   def [](pos)
