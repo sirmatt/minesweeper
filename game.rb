@@ -29,13 +29,24 @@ class MinesweeperGame
 
 end
 
+def save
+  puts "put a filename:"
+  filename = gets.chomp
+  if filename[-4..-1] != ".txt"
+    filename << ".txt"
+  end
+  File.write("./savegames/" + filename, self.to_yaml)
+end
+
 def prompt
   #asks user for a move_type and position(as 1 array with row,col)
 
   while true
+    puts "type 'save' to save"
     puts "To reveal a square, enter a position as [row],[column]"
     puts "To flag/unflag a mine, enter f,[row],[column]"
     position_move = gets.chomp.split(",")
+    save if position_move.join("") == "save"
     if position_move.length == 2
       return position_move.map { |move| move.strip.to_i }, :r
     elsif position_move.length == 3
@@ -45,5 +56,8 @@ def prompt
 end
 
 if __FILE__ == $PROGRAM_NAME
+  if ARGV[0]
+    YAML.load_file("./savegames/" + ARGV.shift).run
+  end
   a = MinesweeperGame.new(9,10).run
 end

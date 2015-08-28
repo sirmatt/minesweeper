@@ -38,7 +38,7 @@ class MinesweeperTile
   end
 
   def flag
-    return if revealed
+    return if revealedA
     @flagged ? @flagged = false : @flagged = true
   end
 
