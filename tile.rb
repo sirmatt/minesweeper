@@ -1,4 +1,5 @@
 require_relative 'board.rb'
+require 'colorize'
 
 class MinesweeperTile
   attr_accessor :bombed
@@ -38,7 +39,7 @@ class MinesweeperTile
   end
 
   def flag
-    return if revealedA
+    return if revealed
     @flagged ? @flagged = false : @flagged = true
   end
 
@@ -75,12 +76,12 @@ class MinesweeperTile
   end
 
   def value
-    return "F" if flagged
+    return "F".colorize(:red).colorize(:background => :black) if flagged
     if revealed
-      return "*" if @bombed
-      return @neighbor_bomb_count.to_s
+      return "*".colorize(:yellow).colorize(:background => :light_black) if @bombed
+      return @neighbor_bomb_count.to_s.colorize(:blue)
     else
-      return "-"
+      return "-".colorize(:black).colorize(:background => :black)
     end
   end
 

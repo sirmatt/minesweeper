@@ -1,4 +1,5 @@
 require_relative "board.rb"
+require 'colorize'
 
 class MinesweeperGame
   def initialize(size,bombs)

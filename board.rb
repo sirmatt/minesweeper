@@ -1,5 +1,6 @@
 require "byebug"
 require_relative "tile.rb"
+require 'colorize'
 
 class Board
   attr_reader :size, :grid, :bombs
@@ -31,7 +32,7 @@ class Board
     @grid.each_with_index do |row, row_idx|
       print row_idx.to_s
       row.each_with_index do |col, col_idx|
-        print col.value + " "
+        print col.value + " ".colorize(:background => :black)
       end
       print "\n"
     end
